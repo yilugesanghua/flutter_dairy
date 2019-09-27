@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dairy/biz/api.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,8 +47,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  CancelToken cancelToken = new CancelToken();
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -55,6 +58,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+    if (_counter.isEven) {
+      await getCategory(cancelToken: cancelToken);
+    } else {
+      try {
+        cancelToken.cancel();
+      } catch (e) {
+        print("======================");
+      }
+    }
   }
 
   @override
