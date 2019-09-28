@@ -1,9 +1,10 @@
 import 'dart:io';
-
+import 'package:flutter_dairy/util/file_util.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_dairy/http/http_config.dart';
 import 'package:flutter_dairy/util/env_utl.dart';
+import 'package:flutter_dairy/util/md5_util.dart';
 import 'package:flutter_dairy/util/network_util.dart';
 
 class DioApiStrategy {
@@ -81,15 +82,13 @@ class DioApiStrategy {
             onReceiveProgress: onReceiveProgress);
       }
     } on DioError catch (e) {
-      if (CancelToken.isCancel(e)) {
-        failCallBack(-999, "cancel");
-      }
+      formatError(e, failCallBack);
       return Future.value();
     } catch (e) {
       if (await isConnected()) {
-        failCallBack(-998, "error request ");
+        failCallBack(-993, "error request ");
       } else {
-        failCallBack(-997, "no net work");
+        failCallBack(-992, "no net work");
       }
       return Future.value();
     }
@@ -103,17 +102,37 @@ class DioApiStrategy {
     }
   }
 
+  /**
+   * @params  localPath  完整路径
+   * @params continued 是否支持断点续传
+   */
   void dioDown(
     String url,
     var localPath,
     onReceiveProgress(int count, int total), {
+    bool continued = false,
+    int startPoint = 0,
     dynamic data,
     var queryParameters,
     CancelToken cancelToken,
     onSendProgress(int count, int total),
     failCallBack(int code, String msg),
   }) async {
-    Options options = new Options();
+    print("==dioDown== continued: $continued  ,startPoint: $startPoint");
+    if (continued) {
+      File file = File(localPath);
+      if (file.existsSync()) {
+        startPoint = await file.length();
+      }
+    } else {
+      File file = File(localPath);
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+    }
+    print("==dioDown2== continued: $continued  ,startPoint: $startPoint");
+    Options options =
+        new Options(headers: {"RANGE": "bytes=$startPoint-"}, method: "GET");
     try {
       await _client.download(
         url,
@@ -124,19 +143,46 @@ class DioApiStrategy {
         options: options,
       );
     } on DioError catch (e) {
-      if (CancelToken.isCancel(e)) {
-        if (failCallBack != null) {
-          failCallBack(-999, "cancel");
-        }
-      }
+      formatError(e, failCallBack);
       return Future.value();
     } catch (exception) {
       if (await isConnected()) {
-        failCallBack(-998, "error request ");
+        failCallBack(-993, "error request ");
       } else {
-        failCallBack(-997, "no net work");
+        failCallBack(-992, "no net work");
       }
       return Future.value();
+    }
+  }
+
+  /*
+   * error统一处理
+   */
+  void formatError(DioError e, failCallBack) {
+    if (e.type == DioErrorType.CONNECT_TIMEOUT) {
+      // It occurs when url is opened timeout.
+      failCallBack(-999, "connet_time_out");
+      print("连接超时");
+    } else if (e.type == DioErrorType.SEND_TIMEOUT) {
+      // It occurs when url is sent timeout.
+      failCallBack(-998, "send_time_out");
+      print("请求超时");
+    } else if (e.type == DioErrorType.RECEIVE_TIMEOUT) {
+      //It occurs when receiving timeout
+      failCallBack(-997, "receive_time_out");
+      print("响应超时");
+    } else if (e.type == DioErrorType.RESPONSE) {
+      // When the server response, but with a incorrect status, such as 404, 503...
+      failCallBack(e?.response?.statusCode ?? -996, "server error");
+      print("出现异常");
+    } else if (e.type == DioErrorType.CANCEL) {
+      // When the request is cancelled, dio will throw a error with this type.
+      failCallBack(-995, "cancel");
+      print("请求取消");
+    } else {
+      failCallBack(-994, "error");
+      //DEFAULT Default error type, Some other Error. In this case, you can read the DioError.error if it is not null.
+      print("未知错误");
     }
   }
 }

@@ -54,6 +54,8 @@ class APiService {
     String url,
     var localPath,
     onReceiveProgress(int count, int total), {
+    bool continued = true,
+    int startPoint = 0,
     Map queryParameters,
     CancelToken cancelToken,
     onSendProgress(int count, int total),
