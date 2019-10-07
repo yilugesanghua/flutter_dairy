@@ -1,9 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dairy/biz/api.dart';
-import 'package:flutter_dairy/flutter_redux_store/first_page.dart';
-import 'package:flutter_dairy/model/test_db_model.dart';
-import 'package:flutter_dairy/sql/sql_manager.dart';
+import 'package:flutter_dairy/ui/login/login_in.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -36,7 +32,7 @@ class MyHomePage extends StatelessWidget {
   // always marked "final".
 
 //  @override
-//  _MyHomePageState createState() => _MyHomePageState();
+//  _MyHomePageState createState() => _MyHomePageState();q
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +47,7 @@ class MyHomePage extends StatelessWidget {
               theme: new ThemeData(
                 primarySwatch: Colors.blue,
               ),
-              home: FirstPage());
+              home: LoginInPage());
         }));
     ;
   }

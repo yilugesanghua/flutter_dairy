@@ -17,6 +17,7 @@ class FirstPage extends StatefulWidget {
 }
 
 class FirstPageState extends State<FirstPage> {
+  CancelToken cancelToken=CancelToken();
   @override
   Widget build(BuildContext context) {
     return StoreBuilder<ReduceState>(
@@ -58,9 +59,9 @@ class FirstPageState extends State<FirstPage> {
       // called again, and so nothing would appear to happen.
     });
 
+    await getCategory(cancelToken: cancelToken);
     if (widget._counter.isEven) {
-      await downLoadTest(cancelToken: widget.cancelToken);
-//      await getCategory(cancelToken: cancelToken);
+//      await downLoadTest(cancelToken: widget.cancelToken);
     } else {
       try {
 //        cancelToken.cancel();
