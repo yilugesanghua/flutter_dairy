@@ -21,13 +21,9 @@ class HomePageState extends State<HomePage> {
       return Scaffold(
         backgroundColor: Colors.white70,
         appBar: AppBar(
-          leading: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
           title: Text(
             "日记",
-            style: TextStyle(color: Colors.white, fontSize: 15),
+            style: TextStyle(color: Colors.white, fontSize:15),
             maxLines: 1,
           ),
           centerTitle: true,

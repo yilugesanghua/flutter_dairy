@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class KingToast {
-  static show(String msg) {
+  static show(String msg, {gravity = ToastGravity.BOTTOM}) {
+    print("======gravity :$gravity======");
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
+        gravity: gravity,
         timeInSecForIos: 1,
         backgroundColor: Colors.black45,
         textColor: Colors.white,

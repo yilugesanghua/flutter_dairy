@@ -2,8 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/home/home_page.dart';
+import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:redux/redux.dart';
 
 class LoginInPage extends StatefulWidget {
@@ -19,7 +22,11 @@ class StateLoginPage extends State<LoginInPage> {
   final passwordTextFieldNode = FocusNode();
   final emailControl = TextEditingController();
   final passwordControl = TextEditingController();
-  var _email, _pass;
+  String _email, _pass;
+  bool _offstageEmail = true;
+  bool _offstagePwd = true;
+  Color qq= Colors.greenAccent;
+  Color wx= Colors.greenAccent;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +38,13 @@ class StateLoginPage extends State<LoginInPage> {
           children: <Widget>[
             Container(
               alignment: Alignment.topCenter,
-              padding: EdgeInsets.only(top: 100),
+              padding: EdgeInsets.only(top: pxh160),
               child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     textBaseline: TextBaseline.ideographic,
                     children: <Widget>[
                       Icon(
@@ -45,11 +52,14 @@ class StateLoginPage extends State<LoginInPage> {
                         color: Colors.pink,
                       ),
                       Container(
-                        padding: EdgeInsets.only(left: 20),
+                        padding: EdgeInsets.only(left: px40),
                       ),
                       Text(
                         "日记",
-                        style: TextStyle(color: Colors.pink, fontSize: 26),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pink,
+                            fontSize: px40),
                       ),
                     ],
                   ),
@@ -58,126 +68,231 @@ class StateLoginPage extends State<LoginInPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.fromLTRB(30, 20, 30, 10),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.email, color: Colors.black54),
-                              Padding(
-                                padding: EdgeInsets.only(left: 12),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: TextFormField(
-                                  controller: emailControl,
-                                  focusNode: emailTextFieldNode,
-                                  decoration: InputDecoration(
-                                    hintText: '请输入邮箱地址',
-                                    hintStyle: TextStyle(
-                                        color: Colors.black26, fontSize: 12),
-                                    labelText: '用户名(邮箱地址)',
-                                    labelStyle: TextStyle(
-                                        color: Colors.black54, fontSize: 16),
-                                  ),
-                                  onEditingComplete: () {
-                                    //切换焦点
-                                    FocusScope.of(context)
-                                        .requestFocus(passwordTextFieldNode);
-                                    print("email onEditingComplete $_email");
-                                  },
-                                  onFieldSubmitted: (value) {
-                                    _email = value;
-                                    print("email onFieldSubmitted  $_email");
-                                  },
-                                  onSaved: (value) {
-                                    _email = value;
-                                    print("onSave emial: $_email");
-                                  },
-                                  validator: (String value) {
-                                    var emailReg = RegExp(
-                                        r"[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?");
-                                    if (!emailReg.hasMatch(value)) {
-                                      print('not validator email: $value');
-                                      return '请输入正确的邮箱地址';
-                                    } else {
-                                      print('validator email: $value');
-                                      return null;
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: <Widget>[
-                              Icon(
-                                Icons.remove_red_eye,
+                          padding:
+                              EdgeInsets.fromLTRB(px60, pxh60, px60, pxh30),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            controller: emailControl,
+                            focusNode: emailTextFieldNode,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.email,
                                 color: Colors.black54,
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 12),
-                              ),
-                              Expanded(
-                                  flex: 1,
-                                  child: TextFormField(
-                                    onEditingComplete: () {
-                                      print('onEditingComplete password :');
-                                    },
-                                    onFieldSubmitted: (value) {
-                                      _pass = value;
+                              suffixIcon: Offstage(
+                                offstage: _offstageEmail,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
                                       FocusScope.of(context)
-                                          .requestFocus(FocusNode());
-                                      print(
-                                          'onFieldSubmitted password : $value');
-                                    },
-                                    controller: passwordControl,
-                                    focusNode: passwordTextFieldNode,
-                                    //密码类型
-                                    obscureText: true,
-                                    decoration: InputDecoration(
-                                        hintText: '请输入密码(长度不小于6)',
-                                        hintStyle: TextStyle(
-                                            color: Colors.black26,
-                                            fontSize: 12),
-                                        labelText: '密码',
-                                        labelStyle: TextStyle(
-                                            color: Colors.black26,
-                                            fontSize: 14)),
-                                    validator: (String value) =>
-                                        (value == null || value.length < 6)
-                                            ? "密码长度小于6"
-                                            : null,
-                                    onSaved: (String value) {
-                                      _pass = value;
-                                      print('onSaved password : $value');
-                                    },
-                                  ))
-                            ],
+                                          .requestFocus(emailTextFieldNode);
+                                      Future.delayed(Duration(milliseconds: 50),
+                                          () {
+                                        _email = "";
+                                        emailControl.clear();
+                                      });
+                                    });
+                                  },
+                                  child: Offstage(
+                                    offstage: false,
+                                    child: Icon(
+                                      Icons.cancel,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              errorStyle:
+                                  TextStyle(color: Colors.red, fontSize: px30),
+                              hintText: '请输入邮箱地址',
+                              hintStyle: TextStyle(
+                                  color: Colors.black26, fontSize: px36),
+                              labelText: '用户名(邮箱地址)',
+                              labelStyle: TextStyle(
+                                  color: Colors.black54, fontSize: px36),
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.pink, width: px10),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(px12)),
+                              ),
+                            ),
+                            onEditingComplete: () {
+                              //切换焦点
+                              FocusScope.of(context)
+                                  .requestFocus(passwordTextFieldNode);
+                              print("email onEditingComplete $_email");
+                            },
+                            onFieldSubmitted: (value) {
+                              _email = value;
+                              print("email onFieldSubmitted  $_email");
+                            },
+                            onSaved: (value) {
+                              _email = value;
+                              print("onSave emial: $_email");
+                            },
+                            onChanged: (value) {
+                              print("onChanged  $value");
+                              setState(() {
+                                _offstageEmail =
+                                    (value == null || value.length == 0);
+                                print(
+                                    "onChanged  _offstageEmail: $_offstageEmail");
+                              });
+                            },
+                            validator: (String value) {
+                              var emailReg = RegExp(
+                                  r"[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?");
+                              if (!emailReg.hasMatch(value)) {
+                                print('not validator email: $value');
+                                return '请输入正确的邮箱地址';
+                              } else {
+                                _email = value;
+                                print('validator email: $value');
+                                return null;
+                              }
+                            },
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          padding: EdgeInsets.fromLTRB(
+                            px60,
+                            0,
+                            px60,
+                            pxh40,
+                          ),
+                          child: TextFormField(
+                            onEditingComplete: () {
+                              print('onEditingComplete password :');
+                            },
+                            onFieldSubmitted: (value) {
+                              _pass = value;
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              print('onFieldSubmitted password : $value');
+                            },
+                            textInputAction: TextInputAction.done,
+                            controller: passwordControl,
+                            focusNode: passwordTextFieldNode,
+                            //密码类型
+                            obscureText: true,
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.remove_red_eye,
+                                  color: Colors.black54,
+                                ),
+                                suffixIcon: Offstage(
+                                  offstage: _offstagePwd,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        FocusScope.of(context).requestFocus(
+                                            passwordTextFieldNode);
+                                        Future.delayed(
+                                            Duration(milliseconds: 50), () {
+                                          _pass = "";
+                                          passwordControl.clear();
+                                        });
+                                      });
+                                    },
+                                    child: Offstage(
+                                      offstage: false,
+                                      child: Icon(
+                                        Icons.cancel,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                hintText: '请输入密码(长度不小于6)',
+                                hintStyle: TextStyle(
+                                    color: Colors.black26, fontSize: px36),
+                                labelText: '密码',
+                                errorStyle: TextStyle(
+                                    color: Colors.red, fontSize: px30),
+                                labelStyle: TextStyle(
+                                    color: Colors.black26, fontSize: px36),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.pink, width: px10),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(px12)),
+                                )),
+                            onChanged: (value) {
+                              setState(() {
+                                _offstagePwd =
+                                    (value == null || value.length == 0);
+                              });
+                            },
+                            validator: (String value) {
+                              if (value == null || value.length < 6) {
+                                return "密码长度小于6";
+                              } else {
+                                _pass = value;
+                                return null;
+                              }
+                            },
+                            onSaved: (String value) {
+                              _pass = value;
+                              print('onSaved password : $value');
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, pxh80, 0, 0),
                           child: Container(
-                            width: 150,
-                            height: 50,
+                            width: px686,
+                            height: pxh96,
                             child: RaisedButton(
                               color: Colors.pink,
                               highlightColor: Colors.red,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(pxh48),
                               ),
                               onPressed: _login,
                               child: Text(
                                 "登录",
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                    color: Colors.white, fontSize: px36),
                               ),
                             ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: pxh60),
+                          child: Row(
+
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              GestureDetector(
+                                child: SvgPicture.asset(
+                                  "svgs/wx.svg",
+                                  width: px120,
+                                  height: px120,
+                                  color: Colors.greenAccent,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: (){setState(() {
+                                  qq=Colors.greenAccent;
+                                });print("-------------");},
+                                onTapDown: (details){setState(() {
+                                  qq=Colors.green;
+                                });},
+                                onTapUp: (upDetails){setState(() {
+                                  qq=Colors.greenAccent;
+                                });},
+                                onTapCancel: (){setState(() {
+                                  qq=Colors.greenAccent;
+                                });},
+                                child: SvgPicture.asset(
+                                  "svgs/qq.svg",
+                                  width: px120,
+                                  height: px120,
+                                  color:qq,
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ],
@@ -195,16 +310,29 @@ class StateLoginPage extends State<LoginInPage> {
   }
 
   void _login() {
+    FocusScope.of(context).requestFocus(FocusNode());
     print('press');
     //保存最后的值
     if (_formKey.currentState.validate()) {
       print('validate login--->');
       _formKey.currentState.save();
-      Navigator.of(context).push(MaterialPageRoute(builder:(BuildContext context){
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) {
         return HomePage();
-      } ));
-      KingToast.show("登录成功");
+      }), (route) => route == null);
+      KingToast.show("登录成功", gravity: ToastGravity.CENTER);
     } else {
+      _formKey.currentState.save();
+      if (_email == null || _email.length == 0) {
+        KingToast.show("请输入用户名", gravity: ToastGravity.CENTER);
+        return;
+      }
+      if (_pass == null || _pass.length == 0) {
+        KingToast.show("请输入密码", gravity: ToastGravity.CENTER);
+        return;
+      }
+
+      KingToast.show("请输入正确的用户名和密码", gravity: ToastGravity.CENTER);
       print('not validate login--->');
     }
   }

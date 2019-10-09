@@ -58,8 +58,10 @@ class CreateDairyState extends State<CreateDairyPage> {
                       padding: EdgeInsets.only(top: 12),
                     ),
                     TextFormField(
+                      textInputAction: TextInputAction.next,
                       controller: titleControl,
                       onEditingComplete: () {
+                        print("=========================onEditingComplete===========================");
                         FocusScope.of(context)
                             .requestFocus(contentTextFieldNode);
                       },
@@ -105,7 +107,7 @@ class CreateDairyState extends State<CreateDairyPage> {
                     Container(
                       margin: EdgeInsets.all(12),
                       child: TextField(
-                        textInputAction: TextInputAction.done,
+                        textInputAction: TextInputAction.search,
                         onEditingComplete: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                         },
