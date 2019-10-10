@@ -1,0 +1,15 @@
+apply plugin: "com.mob.sdk"
+
+MobSDK {
+    appKey "2c9b1cf68105d"
+    appSecret "c9d2085f513f8e847a8a6dc8448acff7"
+    ShareSDK {
+        devInfo {
+            QQ {
+                appId "1106689924"
+                appKey "07081eae00b15a4dc8c6fb09fdfb9575"
+                shareByAppClient true
+            }
+        }
+    }
+}

@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/home/home_page.dart';
+import 'package:flutter_dairy/ui/user/user_reducer.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
+import 'package:flutter_dairy/widget/inkwidget.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:redux/redux.dart';
+import 'package:sharesdk_plugin/sharesdk_defines.dart';
 
 class LoginInPage extends StatefulWidget {
   @override
@@ -25,8 +28,8 @@ class StateLoginPage extends State<LoginInPage> {
   String _email, _pass;
   bool _offstageEmail = true;
   bool _offstagePwd = true;
-  Color qq= Colors.greenAccent;
-  Color wx= Colors.greenAccent;
+  Color qq = Colors.greenAccent;
+  Color wx = Colors.greenAccent;
 
   @override
   Widget build(BuildContext context) {
@@ -260,38 +263,40 @@ class StateLoginPage extends State<LoginInPage> {
                         Padding(
                           padding: EdgeInsets.only(top: pxh60),
                           child: Row(
-
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              GestureDetector(
+                              InkWidget(
                                 child: SvgPicture.asset(
                                   "svgs/wx.svg",
                                   width: px120,
                                   height: px120,
-                                  color: Colors.greenAccent,
+                                  color: qq,
                                 ),
+                                highlightColor: Colors.blue,
+                                borderRadius:
+                                    BorderRadius.all(const Radius.circular(60)),
+                                splashColor: Colors.pink,
+                                onTap: () {
+                                  print("=========");
+                                },
                               ),
-                              GestureDetector(
-                                onTap: (){setState(() {
-                                  qq=Colors.greenAccent;
-                                });print("-------------");},
-                                onTapDown: (details){setState(() {
-                                  qq=Colors.green;
-                                });},
-                                onTapUp: (upDetails){setState(() {
-                                  qq=Colors.greenAccent;
-                                });},
-                                onTapCancel: (){setState(() {
-                                  qq=Colors.greenAccent;
-                                });},
+                              InkWidget(
                                 child: SvgPicture.asset(
                                   "svgs/qq.svg",
                                   width: px120,
                                   height: px120,
-                                  color:qq,
+                                  color: qq,
                                 ),
-                              )
+                                highlightColor: Colors.blue,
+                                borderRadius:
+                                    BorderRadius.all(const Radius.circular(60)),
+                                splashColor: Colors.pink,
+                                onTap: () {
+                                  store.dispatch(
+                                      thirdPartAuth(ShareSDKPlatforms.qq));
+                                },
+                              ),
                             ],
                           ),
                         ),

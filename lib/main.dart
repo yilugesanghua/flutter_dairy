@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dairy/ui/login/login_in.dart';
+import 'package:flutter_dairy/ui/user/login_in.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:redux/redux.dart';
@@ -11,7 +11,7 @@ main() {
   /// 创建全局Store
   final store = Store<ReduceState>(
     getReduce,
-    initialState: ReduceState(1),
+    initialState: ReduceState.initial(),
     middleware: middleware,
   );
 //  runApp(MyHomePage(
@@ -29,11 +29,13 @@ main() {
     ),
   );
 }
-void run(){
-  for(int i =1;i<=1080;i++){
+
+void run() {
+  for (int i = 1; i <= 1080; i++) {
     print("final double px$i=ScreenUtil.getInstance().setWidth($i);");
   }
 }
+
 class MyHomePage extends StatelessWidget {
   final Store<ReduceState> store;
 
@@ -58,10 +60,10 @@ class MyHomePage extends StatelessWidget {
           print("------------------->${ScreenUtil.screenWidthDp}");
           print("------------------->${ScreenUtil.pixelRatio}");
           print("------------------->${ScreenUtil.textScaleFactory}");
-          print("------------------->${ScreenUtil.getInstance().scaleWidth},${ScreenUtil.getInstance().scaleHeight}");
+          print(
+              "------------------->${ScreenUtil.getInstance().scaleWidth},${ScreenUtil.getInstance().scaleHeight}");
 
           return MaterialApp(
-
               title: 'Dairy',
               theme: new ThemeData(
                 primarySwatch: Colors.blue,

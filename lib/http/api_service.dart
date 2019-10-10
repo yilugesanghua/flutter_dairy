@@ -25,12 +25,14 @@ class APiService {
     CancelToken cancelToken,
     onReceiveProgress(int count, int total),
     failCallBack(int code, String msg),
+    onStart(),
   }) async {
     DioApiStrategy.getInstance().dioFetch(url, "GET", callBack,
         queryParameters: queryParameters,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
-        failCallBack: failCallBack);
+        failCallBack: failCallBack,
+        onStart: onStart);
   }
 
   void post(
@@ -41,13 +43,15 @@ class APiService {
     CancelToken cancelToken,
     onReceiveProgress(int count, int total),
     failCallBack(int code, String msg),
+    onStart(),
   }) async {
     DioApiStrategy.getInstance().dioFetch(url, "POST", callBack,
         data: data,
         queryParameters: queryParameters,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
-        failCallBack: failCallBack);
+        failCallBack: failCallBack,
+        onStart: onStart);
   }
 
   void down(
@@ -60,11 +64,13 @@ class APiService {
     CancelToken cancelToken,
     onSendProgress(int count, int total),
     failCallBack(int code, String msg),
+    onStart(),
   }) async {
     DioApiStrategy.getInstance().dioDown(url, localPath, onReceiveProgress,
         queryParameters: queryParameters,
         cancelToken: cancelToken,
         onSendProgress: onReceiveProgress,
-        failCallBack: failCallBack);
+        failCallBack: failCallBack,
+        onStart: onStart);
   }
 }

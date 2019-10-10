@@ -37,6 +37,8 @@ dependencies:
   flutter_screenutil: ^0.5.3
   #svg
   flutter_svg: 0.14.1
+  # shareSdk 登录
+  sharesdk_plugin: ^1.1.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

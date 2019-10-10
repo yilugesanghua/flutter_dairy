@@ -59,6 +59,7 @@ class DioApiStrategy {
     onSendProgress(int count, int total),
     onReceiveProgress(int count, int total),
     failCallBack(int code, String msg),
+    onStart(),
   }) async {
     Options options = new Options(
         headers: {HttpHeaders.acceptHeader: "accept: application/json"},
@@ -66,6 +67,7 @@ class DioApiStrategy {
     var response;
     try {
       if (method?.toLowerCase() == "post") {
+        onStart();
         response = await _client.post(url,
             data: FormData.fromMap(data),
             queryParameters: queryParameters,
@@ -74,6 +76,7 @@ class DioApiStrategy {
             onSendProgress: onSendProgress,
             onReceiveProgress: onReceiveProgress);
       } else {
+        onStart();
         options = buildCacheOptions(Duration(days: 7), options: options);
         response = await _client.get(url,
             queryParameters: queryParameters,
@@ -117,6 +120,7 @@ class DioApiStrategy {
     CancelToken cancelToken,
     onSendProgress(int count, int total),
     failCallBack(int code, String msg),
+    onStart(),
   }) async {
     print("==dioDown== continued: $continued  ,startPoint: $startPoint");
     if (continued) {
@@ -134,6 +138,7 @@ class DioApiStrategy {
     Options options =
         new Options(headers: {"RANGE": "bytes=$startPoint-"}, method: "GET");
     try {
+      onStart();
       await _client.download(
         url,
         localPath,
