@@ -30,11 +30,6 @@ main() {
   );
 }
 
-void run() {
-  for (int i = 1; i <= 1080; i++) {
-    print("final double px$i=ScreenUtil.getInstance().setWidth($i);");
-  }
-}
 
 class MyHomePage extends StatelessWidget {
   final Store<ReduceState> store;
@@ -43,7 +38,6 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    run();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return StoreProvider(
