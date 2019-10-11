@@ -11,7 +11,9 @@ class FirstPage extends StatefulWidget {
   static final String sName = "/";
   int _counter = 0;
   CancelToken cancelToken = new CancelToken();
+  final Store<ReduceState> store;
 
+  FirstPage(this.store);
   @override
   State createState() => FirstPageState();
 }

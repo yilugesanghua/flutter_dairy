@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_dairy/util/file_util.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:flutter_dairy/const/shareprefer_const.dart';
 import 'package:flutter_dairy/http/http_config.dart';
 import 'package:flutter_dairy/util/env_utl.dart';
-import 'package:flutter_dairy/util/md5_util.dart';
 import 'package:flutter_dairy/util/network_util.dart';
+import 'package:flutter_dairy/util/sharepreference_util.dart';
 
 class DioApiStrategy {
   static DioApiStrategy _instance;
@@ -53,17 +54,25 @@ class DioApiStrategy {
     String url,
     String method,
     Function callBack, {
+    Map headers,
     Map data,
-    var queryParameters,
+    Map<String, String> queryParameters,
     CancelToken cancelToken,
     onSendProgress(int count, int total),
     onReceiveProgress(int count, int total),
     failCallBack(int code, String msg),
     onStart(),
   }) async {
-    Options options = new Options(
-        headers: {HttpHeaders.acceptHeader: "accept: application/json"},
-        method: (method?.toUpperCase()));
+    var headerOptions = {HttpHeaders.acceptHeader: "accept: application/json"};
+    String token =
+        await SharePreferenceUtil.getInstance().getStringValue(TOKEN);
+    if (token.isNotEmpty) {
+      headerOptions["Authorization"] = token;
+    }
+    headerOptions.addAll(headers ?? {});
+    print("headerOptions:  $headerOptions");
+    Options options =
+        new Options(headers: headerOptions, method: (method?.toUpperCase()));
     var response;
     try {
       if (method?.toLowerCase() == "post") {
@@ -98,10 +107,10 @@ class DioApiStrategy {
     print("====response.toString()=======${response.toString()}");
     var result = response?.data;
     print("====result=======$result");
-    if (!result["error"]) {
-      callBack(result);
+    if (result["code"] == 0) {
+      callBack(result["result"]);
     } else {
-      failCallBack(-996, result["msg"]);
+      failCallBack(result["code"], result["message"]);
     }
   }
 
@@ -180,6 +189,9 @@ class DioApiStrategy {
       // When the server response, but with a incorrect status, such as 404, 503...
       failCallBack(e?.response?.statusCode ?? -996, "server error");
       print("出现异常");
+      if (e?.response?.statusCode == 401) {
+        //TODO 退出登录
+      }
     } else if (e.type == DioErrorType.CANCEL) {
       // When the request is cancelled, dio will throw a error with this type.
       failCallBack(-995, "cancel");

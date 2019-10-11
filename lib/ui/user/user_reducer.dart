@@ -1,9 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dairy/biz/dairy_biz.dart';
+import 'package:flutter_dairy/const/shareprefer_const.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
-import 'package:flutter_dairy/http/api_service.dart';
+import 'package:flutter_dairy/ui/home/home_page.dart';
 import 'package:flutter_dairy/ui/user/user.dart';
+import 'package:flutter_dairy/util/sharepreference_util.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:redux/redux.dart';
@@ -13,6 +17,7 @@ import 'package:sharesdk_plugin/sharesdk_interface.dart';
 
 final userReducer = combineReducers<User>([
   TypedReducer<User, UserLoginAction>(_login),
+  TypedReducer<User, UserLogTimeOutAction>(_logTimeOut),
 ]);
 
 /// 定义了一个 用户登录action UserLoginAction
@@ -22,18 +27,42 @@ class UserLoginAction {
   UserLoginAction(this.user);
 }
 
+class UserLogin_Action {
+  User user;
+
+  UserLogin_Action(this.user);
+}
+
 /// 定义了一个要与AddUserAction绑定一起函数
 /// 该函数的作用主要是修改数据，就是之前的if和else里各自要处理的逻辑
 User _login(User user, UserLoginAction addAction) {
+  print("======_login=======>${addAction.user}");
+  user = addAction.user;
+  return user;
+}
+
+/// 定义了一个 用户登录action UserLoginAction
+class UserLogTimeOutAction {
+  User user;
+
+  UserLogTimeOutAction(this.user);
+}
+
+/// 定义了一个要与AddUserAction绑定一起函数
+/// 该函数的作用主要是修改数据，就是之前的if和else里各自要处理的逻辑
+User _logTimeOut(User user, UserLogTimeOutAction addAction) {
+  print("======_logTimeOut=======>${addAction.user}");
   user = addAction.user;
   return user;
 }
 
 /// type  登录方式 ShareSDKPlatforms.qq
-ThunkAction<ReduceState> thirdPartAuth(ShareSDKPlatform type) {
-  print("--->${ type.name}");
+ThunkAction<ReduceState> thirdPartAuth(
+    BuildContext context, ShareSDKPlatform type) {
+  print("--->${type.name}");
   return (Store<ReduceState> store) async {
     if (type == ShareSDKPlatforms.qq || type == ShareSDKPlatforms.whatsApp) {
+      print("=" * 100);
       SharesdkPlugin.getUserInfo(type,
           (SSDKResponseState state, Map user, SSDKError error) {
         if (state == SSDKResponseState.Success) {
@@ -46,11 +75,21 @@ ThunkAction<ReduceState> thirdPartAuth(ShareSDKPlatform type) {
           params['openId'] = openId;
           params['accessToken'] = accessToken;
           login(
-              (result) {
+              (result) async {
                 print("====>登录成功$result");
-//           store.dispatch(UserLoginAction(User))
+                var user = User.fromJson(result);
+                await SharePreferenceUtil.getInstance()
+                    .putStringValue(TOKEN, user?.token);
+                store.dispatch(UserLoginAction(user));
+
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(store),
+                    ),
+                    (route) => route == null);
               },
-              queryParameters: params,
+              data: params,
               failCallBack: (code, msg) {
                 print("====>登录失败$code");
               },
