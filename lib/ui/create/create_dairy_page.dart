@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
+import 'package:flutter_dairy/widget/dairy_widget.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class CreateDairyPage extends StatefulWidget {
@@ -144,7 +145,8 @@ class CreateDairyState extends State<CreateDairyPage> {
                     ),
                     maxLines: 4,
                   ),
-                )
+                ),
+                DairyText(  ),
               ],
             ),
           ),

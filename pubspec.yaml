@@ -37,10 +37,12 @@ dependencies:
   flutter_screenutil: ^0.5.3
   #svg
   flutter_svg: 0.14.1
-#  # shareSdk 登录
+  #  # shareSdk 登录
   sharesdk_plugin: ^1.1.4
   #数据存储
   shared_preferences: 0.5.3+4
+  #刷新加载
+  flutter_easyrefresh: 2.0.4
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -63,7 +65,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - svgs/
+    - svgs/
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 

@@ -3,6 +3,7 @@ import 'package:flutter_dairy/biz/dairy_biz.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/dairy.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
@@ -10,6 +11,7 @@ import 'package:redux_thunk/redux_thunk.dart';
 final dairyReducer = combineReducers<List<Dairy>>([
   TypedReducer<List<Dairy>, CreateDairyAction>(_createDairy),
   TypedReducer<List<Dairy>, RefreshListAction>(_refreshList),
+  TypedReducer<List<Dairy>, LoadListAction>(_loadList),
   TypedReducer<List<Dairy>, EditDairyAction>(_editDairy),
   TypedReducer<List<Dairy>, DeleteDairyAction>(_deleteDairy),
 ]);
@@ -39,12 +41,12 @@ class EditDairyAction {
 
 List<Dairy> _editDairy(List<Dairy> dairy, EditDairyAction addAction) {
   print("======_login=======>${addAction.dairy}");
-  dairy?.forEach((Dairy temp) {
-    if (addAction.dairy.id == temp.id) {
-      temp = addAction.dairy;
-      return;
+  for (int i = 0; i < dairy.length; i++) {
+    if (addAction.dairy.id == dairy[i].id) {
+      dairy[i] = addAction.dairy;
+      break;
     }
-  });
+  }
   return dairy;
 }
 
@@ -57,16 +59,10 @@ class DeleteDairyAction {
 
 List<Dairy> _deleteDairy(List<Dairy> dairy, DeleteDairyAction addAction) {
   print("======_login=======>${addAction.dairy}");
-//  dairy = addAction.dairy;
-  dairy?.forEach((Dairy temp) {
-    if (temp.id == addAction.dairy.id) {
-      dairy?.remove(addAction.dairy);
-      return;
-    }
-  });
-
+  dairy?.remove(addAction.dairy);
   return dairy;
 }
+
 //刷新列表
 class RefreshListAction {
   List<Dairy> dairyList;
@@ -96,30 +92,41 @@ List<Dairy> _loadList(List<Dairy> dairy, LoadListAction action) {
 }
 
 ///获取日记列表数据
-ThunkAction<ReduceState> dairyList({int page = 1, int pageCount = 20}) {
+Future<ThunkAction<ReduceState>> dairyList(EasyRefreshController _controller,
+    {int page = 1, int pageCount = 20, success, failCallback}) async {
   return (Store<ReduceState> store) async {
     Map<String, String> params = Map();
     params["page"] = "$page";
     params["pageCount"] = "$pageCount";
-    getDairyList(
-            (result) {
+    await getDairyList(
+        (result) {
           print("getDairyList==> $result");
-//          result?
-//          List<Dairy> list = List<Dairy>.from(result);
-//          print("getDairyList  list==> $list");
+          List<Dairy> list = Dairy.fromMapList(result);
 
-          store.dispatch(
-              RefreshListAction(dairyList: Dairy.fromMapList(result)));
+          if (page == 1) {
+            print("====onRefresh page =1===");
+            _controller.resetLoadState();
+            _controller.finishRefresh(
+                noMore: (list == null || list.length < pageCount));
+            store.dispatch(RefreshListAction(dairyList: list));
+          } else {
+            print("====onRefresh page !=1===");
+            _controller.finishLoad(
+                noMore: (list == null || list.length < pageCount));
+            store.dispatch(LoadListAction(dairyList: list));
+          }
+          if (success != null) {
+            success(list ?? List<Dairy>(), pageCount);
+          }
         },
         queryParameters: params,
-        failCallBack: (code, msg) {
-          print("getDairyList==> code $code msg $msg");
-        },
+        failCallBack: failCallback,
         onStart: () {
           print("getDairyList==> onstart");
         });
   };
 }
+
 ///创建日记
 ThunkAction<ReduceState> toCreateDairy(BuildContext context,
     {String weather, String content, String mood}) {

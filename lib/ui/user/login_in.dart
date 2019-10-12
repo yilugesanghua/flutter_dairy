@@ -293,6 +293,7 @@ class StateLoginPage extends State<LoginInPage> {
                               converter: (store) {
                                 return (type) {
                                   store.dispatch(thirdPartAuth(context,type));
+
                                 };
                               },
                               builder: (context, callBack) {

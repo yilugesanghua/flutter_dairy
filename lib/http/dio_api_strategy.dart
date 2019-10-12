@@ -76,7 +76,7 @@ class DioApiStrategy {
     var response;
     try {
       if (method?.toLowerCase() == "post") {
-        onStart();
+        await onStart();
         response = await _client.post(url,
             data: FormData.fromMap(data),
             queryParameters: queryParameters,
@@ -85,7 +85,7 @@ class DioApiStrategy {
             onSendProgress: onSendProgress,
             onReceiveProgress: onReceiveProgress);
       } else {
-        onStart();
+        await onStart();
         options = buildCacheOptions(Duration(days: 7), options: options);
         response = await _client.get(url,
             queryParameters: queryParameters,
@@ -98,9 +98,9 @@ class DioApiStrategy {
       return Future.value();
     } catch (e) {
       if (await isConnected()) {
-        failCallBack(-993, "error request ");
+        await failCallBack(-993, "error request ");
       } else {
-        failCallBack(-992, "no net work");
+        await failCallBack(-992, "no net work");
       }
       return Future.value();
     }
@@ -108,9 +108,9 @@ class DioApiStrategy {
     var result = response?.data;
     print("====result=======$result");
     if (result["code"] == 0) {
-      callBack(result["result"]);
+      await callBack(result["result"]);
     } else {
-      failCallBack(result["code"], result["message"]);
+      await failCallBack(result["code"], result["message"]);
     }
   }
 
@@ -161,9 +161,9 @@ class DioApiStrategy {
       return Future.value();
     } catch (exception) {
       if (await isConnected()) {
-        failCallBack(-993, "error request ");
+        await failCallBack(-993, "error request ");
       } else {
-        failCallBack(-992, "no net work");
+        await failCallBack(-992, "no net work");
       }
       return Future.value();
     }
@@ -172,32 +172,32 @@ class DioApiStrategy {
   /*
    * error统一处理
    */
-  void formatError(DioError e, failCallBack) {
+  void formatError(DioError e, failCallBack) async {
     if (e.type == DioErrorType.CONNECT_TIMEOUT) {
       // It occurs when url is opened timeout.
-      failCallBack(-999, "connet_time_out");
+      await failCallBack(-999, "connet_time_out");
       print("连接超时");
     } else if (e.type == DioErrorType.SEND_TIMEOUT) {
       // It occurs when url is sent timeout.
-      failCallBack(-998, "send_time_out");
+      await failCallBack(-998, "send_time_out");
       print("请求超时");
     } else if (e.type == DioErrorType.RECEIVE_TIMEOUT) {
       //It occurs when receiving timeout
-      failCallBack(-997, "receive_time_out");
+      await failCallBack(-997, "receive_time_out");
       print("响应超时");
     } else if (e.type == DioErrorType.RESPONSE) {
       // When the server response, but with a incorrect status, such as 404, 503...
-      failCallBack(e?.response?.statusCode ?? -996, "server error");
+      await failCallBack(e?.response?.statusCode ?? -996, "server error");
       print("出现异常");
       if (e?.response?.statusCode == 401) {
         //TODO 退出登录
       }
     } else if (e.type == DioErrorType.CANCEL) {
       // When the request is cancelled, dio will throw a error with this type.
-      failCallBack(-995, "cancel");
+      await failCallBack(-995, "cancel");
       print("请求取消");
     } else {
-      failCallBack(-994, "error");
+      await failCallBack(-994, "error");
       //DEFAULT Default error type, Some other Error. In this case, you can read the DioError.error if it is not null.
       print("未知错误");
     }

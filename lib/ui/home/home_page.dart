@@ -5,6 +5,7 @@ import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/create_dairy_page.dart';
 import 'package:flutter_dairy/ui/create/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
@@ -20,10 +21,12 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  int page = 1;
+  EasyRefreshController _controller = EasyRefreshController();
+
   @override
   void initState() {
     super.initState();
-    widget.store.dispatch(dairyList());
   }
 
   @override
@@ -58,58 +61,114 @@ class HomePageState extends State<HomePage> {
       body: StoreConnector<ReduceState, List<Dairy>>(
         converter: (store) => store.state.dairyList,
         builder: (BuildContext context, List<Dairy> dairy) {
-          return ListView.builder(
-            padding: EdgeInsets.only(top: 16),
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                color: Colors.white,
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(6))),
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "${dairy[index].weather} ${dairy[index].mood}",
-                        style: TextStyle(fontSize: 18, color: Colors.black87),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 6),
-                      ),
-                      Text(
-                        "${dairy[index].content}",
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
+          return EasyRefresh(
+            firstRefresh: true,
+            enableControlFinishLoad: true,
+            enableControlFinishRefresh: true,
+            controller: _controller,
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 16),
+              itemBuilder: (BuildContext context, int index) {
+                final item = dairy[index];
+                return Dismissible(
+                  onDismissed: (direction) {
+                    widget.store.dispatch(DeleteDairyAction(dairy: item));
+                  },
+                  background: Container(
+                    color: Colors.blue,
+                    child: Text("删除"),
+                  ),
+                  secondaryBackground: Container(
+                    color: Colors.red,
+                    child: Text("收藏"),
+                  ),
+                  key: new Key("${item.id}"),
+                  child: Card(
+                    margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    color: Colors.white,
+                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6))),
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "${formatDate(DateTime.fromMillisecondsSinceEpoch(dairy[index].time * 1000), [
-                              yyyy,
-                              '-',
-                              mm,
-                              '-',
-                              dd,
-                              ' ',
-                              HH,
-                              ':',
-                              mm,
-                            ])}",
+                            "${dairy[index].weather} ${dairy[index].mood}",
                             style:
-                                TextStyle(fontSize: 12, color: Colors.black87),
+                                TextStyle(fontSize: 18, color: Colors.black87),
                           ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 6),
+                          ),
+                          Text(
+                            "${dairy[index].content}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                "${formatDate(DateTime.fromMillisecondsSinceEpoch(dairy[index].time * 1000), [
+                                  yyyy,
+                                  '-',
+                                  mm,
+                                  '-',
+                                  dd,
+                                  ' ',
+                                  HH,
+                                  ':',
+                                  mm,
+                                ])}",
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black87),
+                              ),
+                            ],
+                          )
                         ],
-                      )
-                    ],
+                      ),
+                    ),
                   ),
-                ),
-              );
+                );
+              },
+              itemCount: dairy == null ? 0 : dairy.length,
+            ),
+            onRefresh: () async {
+              page = 1;
+              widget.store.dispatch(await dairyList(_controller, page: page,
+                  success: (List<Dairy> result, int pageSize) {
+//                    if (page == 1) {
+//                      print("====onRefresh page =1===");
+//                      _controller.resetLoadState();
+//                      _controller.finishRefresh(
+//                          noMore: (result == null || result.length < pageSize));
+//                    } else {
+//                      print("====onRefresh page !=1===");
+//                      _controller.finishLoad(
+//                          noMore: (result == null || result.length < pageSize));
+//                    }
+                page++;
+              }));
             },
-            itemCount: dairy == null ? 0 : dairy.length,
+            onLoad: () async {
+              widget.store.dispatch(await dairyList(_controller, page: page,
+                  success: (List<Dairy> result, int pageSize) {
+//                    if (page == 1) {
+//                      print("====onLoad page =1===");
+//                      _controller.resetLoadState();
+//                      _controller.finishRefresh(
+//                          noMore: (result == null || result.length < pageSize));
+//                    } else {
+//                      print("====onLoad page =1===");
+//                      _controller.finishLoad(
+//                          noMore: (result == null || result.length < pageSize));
+//                    }
+                page++;
+              }));
+            },
           );
         },
       ),
@@ -118,11 +177,10 @@ class HomePageState extends State<HomePage> {
         splashColor: Colors.pink,
         elevation: 2,
         onPressed: () {
-          widget.store.dispatch(dairyList());
-//          Navigator.of(context)
-//              .push(MaterialPageRoute(builder: (BuildContext context) {
-//            return CreateDairyPage();
-//          }));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (BuildContext context) {
+            return CreateDairyPage();
+          }));
         },
         child: Icon(
           Icons.add,
