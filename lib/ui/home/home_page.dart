@@ -1,12 +1,15 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/create_dairy_page.dart';
 import 'package:flutter_dairy/ui/create/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
+import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:redux/redux.dart';
 
 class HomePage extends StatefulWidget {
@@ -70,21 +73,34 @@ class HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(top: 16),
               itemBuilder: (BuildContext context, int index) {
                 final item = dairy[index];
-                return Dismissible(
-                  onDismissed: (direction) {
-                    widget.store.dispatch(DeleteDairyAction(dairy: item));
-                  },
-                  background: Container(
-                    color: Colors.blue,
-                    child: Text("删除"),
-                  ),
-                  secondaryBackground: Container(
-                    color: Colors.red,
-                    child: Text("收藏"),
-                  ),
-                  key: new Key("${item.id}"),
+                return Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: 0.25,
+                  secondaryActions: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(bottom: px16),
+                      child: IconSlideAction(
+                        caption: 'Archive2',
+                        color: Colors.blue,
+                        icon: Icons.archive,
+                        onTap: () => widget.store
+                            .dispatch(DeleteDairyAction(dairy: item)),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: px16),
+                      child: IconSlideAction(
+                        caption: 'Share2',
+                        color: Colors.indigo,
+                        icon: Icons.share,
+                        onTap: () => widget.store
+                            .dispatch(DeleteDairyAction(dairy: item)),
+                      ),
+                    )
+                  ],
                   child: Card(
-                    margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    margin:
+                        EdgeInsets.only(left: px16, right: px16, bottom: px16),
                     color: Colors.white,
                     elevation: 6,
                     shape: RoundedRectangleBorder(
