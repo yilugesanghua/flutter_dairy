@@ -61,6 +61,7 @@ class DioApiStrategy {
     onSendProgress(int count, int total),
     onReceiveProgress(int count, int total),
     failCallBack(int code, String msg),
+    Duration maxAge,
     onStart(),
   }) async {
     var headerOptions = {HttpHeaders.acceptHeader: "accept: application/json"};
@@ -86,7 +87,8 @@ class DioApiStrategy {
             onReceiveProgress: onReceiveProgress);
       } else {
         await onStart();
-        options = buildCacheOptions(Duration(days: 7), options: options);
+        options = buildCacheOptions(maxAge ?? Duration(milliseconds: 0),
+            options: options);
         response = await _client.get(url,
             queryParameters: queryParameters,
             options: options,

@@ -28,6 +28,7 @@ class APiService {
     onReceiveProgress(int count, int total),
     failCallBack(int code, String msg),
     onStart(),
+    Duration maxAge,
   }) async {
     DioApiStrategy.getInstance().dioFetch(url, "GET", callBack,
         queryParameters: queryParameters,
@@ -35,7 +36,8 @@ class APiService {
         onReceiveProgress: onReceiveProgress,
         failCallBack: failCallBack,
         headers: headers,
-        onStart: onStart);
+        onStart: onStart,
+        maxAge: maxAge);
   }
 
   void post(

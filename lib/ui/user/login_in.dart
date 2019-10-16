@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
-import 'package:flutter_dairy/ui/home/home_page.dart';
-import 'package:flutter_dairy/ui/user/user.dart';
 import 'package:flutter_dairy/ui/user/user_reducer.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
@@ -10,7 +8,6 @@ import 'package:flutter_dairy/widget/inkwidget.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:redux/redux.dart';
 import 'package:sharesdk_plugin/sharesdk_defines.dart';
 
 class LoginInPage extends StatefulWidget {
@@ -268,7 +265,7 @@ class StateLoginPage extends State<LoginInPage> {
                             StoreConnector<ReduceState, Function>(
                               converter: (store) {
                                 return (type) {
-                                  store.dispatch(thirdPartAuth(context,type));
+                                  store.dispatch(thirdPartAuth(context, type));
                                 };
                               },
                               builder: (context, callBack) {
@@ -292,8 +289,7 @@ class StateLoginPage extends State<LoginInPage> {
                             StoreConnector<ReduceState, Function>(
                               converter: (store) {
                                 return (type) {
-                                  store.dispatch(thirdPartAuth(context,type));
-
+                                  store.dispatch(thirdPartAuth(context, type));
                                 };
                               },
                               builder: (context, callBack) {
@@ -332,6 +328,46 @@ class StateLoginPage extends State<LoginInPage> {
   }
 
   void _login() {
+//    showDialog(
+//        context: context,
+//        builder: (BuildContext context) {
+//          return Center(
+//            child: Container(
+//              color: Colors.transparent,
+//              child: Column(
+//                crossAxisAlignment: CrossAxisAlignment.center,
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                children: <Widget>[
+//                  SizedBox(
+//                    width: px50,
+//                    height: px50,
+//                    child: CircularProgressIndicator(),
+//                  ),
+//                  Text(
+//                    "loading...",
+//                    style: TextStyle(fontSize: px24, color: Colors.black54),
+//                  ),
+//                ],
+//              ),
+//            ),
+//          );
+//        });
+//    showDialog(
+//        context: context,
+//        builder: (BuildContext context) {
+//          return AlertDialog(
+//            title: Center(child: Text("this is title"),),
+//            titlePadding: EdgeInsets.only(
+//                left: px12, right: px12, top: px12, bottom: px12),
+//            titleTextStyle: TextStyle(fontSize: px30, color: Colors.red),
+//            content: Text("this is content,please see"),
+//            actions: <Widget>[
+//              Text("确定",style: TextStyle(fontSize: px30,color: Colors.green),),
+//              Padding(padding: EdgeInsets.only(left: px100),),
+//              Text("取消"),
+//            ],
+//          );
+//        });
     FocusScope.of(context).requestFocus(FocusNode());
     print('press');
     //保存最后的值
@@ -340,7 +376,7 @@ class StateLoginPage extends State<LoginInPage> {
       _formKey.currentState.save();
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (BuildContext context) {
-            //TODO  按钮 StoreConnector
+        //TODO  按钮 StoreConnector
 //        return HomePage();
       }), (route) => route == null);
       KingToast.show("登录成功", gravity: ToastGravity.CENTER);

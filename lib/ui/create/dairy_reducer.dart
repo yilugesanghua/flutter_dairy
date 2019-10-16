@@ -106,8 +106,7 @@ Future<ThunkAction<ReduceState>> dairyList(EasyRefreshController _controller,
           if (page == 1) {
             print("====onRefresh page =1===");
             _controller.resetLoadState();
-            _controller.finishRefresh(
-                noMore: (list == null || list.length < pageCount));
+            _controller.finishRefresh();
             store.dispatch(RefreshListAction(dairyList: list));
           } else {
             print("====onRefresh page !=1===");

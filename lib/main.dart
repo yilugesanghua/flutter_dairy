@@ -22,6 +22,7 @@ main() {
       store: store,
       child: MaterialApp(
         theme: ThemeData(
+          platform: TargetPlatform.iOS,
           primaryColor: Colors.deepPurpleAccent,
         ),
         home: MyHomePage(store),
@@ -50,12 +51,6 @@ class MyHomePage extends StatelessWidget {
           ScreenUtil.instance =
               ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
                 ..init(context);
-          print("------------------->${ScreenUtil.getInstance().width}");
-          print("------------------->${ScreenUtil.screenWidthDp}");
-          print("------------------->${ScreenUtil.pixelRatio}");
-          print("------------------->${ScreenUtil.textScaleFactory}");
-          print(
-              "------------------->${ScreenUtil.getInstance().scaleWidth},${ScreenUtil.getInstance().scaleHeight}");
 
           return MaterialApp(
               title: 'Dairy',

@@ -17,6 +17,8 @@ class Dairy {
 
   ///是否是本地数据
   bool isLocal;
+  ///TODO
+  int type;
 
   Dairy(
       {this.isLocal,

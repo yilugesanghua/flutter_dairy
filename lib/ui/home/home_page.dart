@@ -6,6 +6,7 @@ import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/create_dairy_page.dart';
 import 'package:flutter_dairy/ui/create/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
+import 'package:flutter_dairy/ui/home/diary_detail.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -65,6 +66,7 @@ class HomePageState extends State<HomePage> {
         converter: (store) => store.state.dairyList,
         builder: (BuildContext context, List<Dairy> dairy) {
           return EasyRefresh(
+            emptyWidget: dairy==null||dairy.isEmpty?Icon(Icons.sort,color: Colors.red,):null,
             firstRefresh: true,
             enableControlFinishLoad: true,
             enableControlFinishRefresh: true,
@@ -73,78 +75,94 @@ class HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(top: 16),
               itemBuilder: (BuildContext context, int index) {
                 final item = dairy[index];
-                return Slidable(
-                  actionPane: SlidableDrawerActionPane(),
-                  actionExtentRatio: 0.25,
-                  secondaryActions: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(bottom: px16),
-                      child: IconSlideAction(
-                        caption: 'Archive2',
-                        color: Colors.blue,
-                        icon: Icons.archive,
-                        onTap: () => widget.store
-                            .dispatch(DeleteDairyAction(dairy: item)),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                      return DiaryDetailPage(item);
+                    }));
+                  },
+                  child: Slidable(
+                    actionPane: SlidableDrawerActionPane(),
+                    actionExtentRatio: 0.2,
+                    secondaryActions: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(bottom: px16),
+                        child: IconSlideAction(
+                          caption: 'Archive2',
+                          color: Colors.blue,
+                          icon: Icons.archive,
+                          onTap: () => widget.store
+                              .dispatch(DeleteDairyAction(dairy: item)),
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: px16),
-                      child: IconSlideAction(
-                        caption: 'Share2',
-                        color: Colors.indigo,
-                        icon: Icons.share,
-                        onTap: () => widget.store
-                            .dispatch(DeleteDairyAction(dairy: item)),
-                      ),
-                    )
-                  ],
-                  child: Card(
-                    margin:
-                        EdgeInsets.only(left: px16, right: px16, bottom: px16),
-                    color: Colors.white,
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(6))),
-                    child: Container(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "${dairy[index].weather} ${dairy[index].mood}",
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.black87),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 6),
-                          ),
-                          Text(
-                            "${dairy[index].content}",
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black54),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                "${formatDate(DateTime.fromMillisecondsSinceEpoch(dairy[index].time * 1000), [
-                                  yyyy,
-                                  '-',
-                                  mm,
-                                  '-',
-                                  dd,
-                                  ' ',
-                                  HH,
-                                  ':',
-                                  mm,
-                                ])}",
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.black87),
+                      Container(
+                        margin: EdgeInsets.only(bottom: px16),
+                        child: IconSlideAction(
+                          caption: 'Share2',
+                          color: Colors.indigo,
+                          icon: Icons.share,
+                          onTap: () => widget.store
+                              .dispatch(DeleteDairyAction(dairy: item)),
+                        ),
+                      )
+                    ],
+                    child: Card(
+                      margin: EdgeInsets.only(
+                          left: px16, right: px16, bottom: px16),
+                      color: Colors.white,
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(6))),
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "${dairy[index].weather} ${dairy[index].mood}",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.black87,
                               ),
-                            ],
-                          )
-                        ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 6),
+                            ),
+                            Hero(
+                                transitionOnUserGestures: true,
+                                tag: "detail${item.id}",
+                                child: Text(
+                                  "${dairy[index].content}",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black54,
+                                  ),
+                                )),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  "${formatDate(DateTime.fromMillisecondsSinceEpoch(dairy[index].time * 1000), [
+                                    yyyy,
+                                    '-',
+                                    mm,
+                                    '-',
+                                    dd,
+                                    ' ',
+                                    HH,
+                                    ':',
+                                    mm,
+                                  ])}",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -156,32 +174,12 @@ class HomePageState extends State<HomePage> {
               page = 1;
               widget.store.dispatch(await dairyList(_controller, page: page,
                   success: (List<Dairy> result, int pageSize) {
-//                    if (page == 1) {
-//                      print("====onRefresh page =1===");
-//                      _controller.resetLoadState();
-//                      _controller.finishRefresh(
-//                          noMore: (result == null || result.length < pageSize));
-//                    } else {
-//                      print("====onRefresh page !=1===");
-//                      _controller.finishLoad(
-//                          noMore: (result == null || result.length < pageSize));
-//                    }
                 page++;
               }));
             },
             onLoad: () async {
               widget.store.dispatch(await dairyList(_controller, page: page,
                   success: (List<Dairy> result, int pageSize) {
-//                    if (page == 1) {
-//                      print("====onLoad page =1===");
-//                      _controller.resetLoadState();
-//                      _controller.finishRefresh(
-//                          noMore: (result == null || result.length < pageSize));
-//                    } else {
-//                      print("====onLoad page =1===");
-//                      _controller.finishLoad(
-//                          noMore: (result == null || result.length < pageSize));
-//                    }
                 page++;
               }));
             },
