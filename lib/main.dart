@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dairy/ui/home/home_page.dart';
 import 'package:flutter_dairy/ui/user/login_in.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +8,9 @@ import 'package:redux/redux.dart';
 
 import 'flutter_redux_store/redux_state.dart';
 
-main() {
+String token;
+
+main() async {
   /// 创建全局Store
   final store = Store<ReduceState>(
     getReduce,
@@ -25,24 +28,39 @@ main() {
           platform: TargetPlatform.iOS,
           primaryColor: Colors.deepPurpleAccent,
         ),
-        home: MyHomePage(store),
+        home: MainPage(store),
       ),
     ),
   );
 }
 
-
-class MyHomePage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   final Store<ReduceState> store;
 
-  MyHomePage(this.store);
+  MainPage(this.store) ;
+
+
+  @override
+  State<StatefulWidget> createState() {
+    return MainPageState();
+  }
+}
+
+class MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    print("initState2");
+  }
 
   @override
   Widget build(BuildContext context) {
+    print("initState3");
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
     return StoreProvider(
-        store: store,
+        store: widget.store,
 
         /// StoreBuilder后要跟上我们定义的那个State类，要不会报错，
         child: StoreBuilder<ReduceState>(
@@ -57,8 +75,9 @@ class MyHomePage extends StatelessWidget {
               theme: new ThemeData(
                 primarySwatch: Colors.blue,
               ),
-              home: LoginInPage());
+              home: (token == null || token == "")
+                  ? LoginInPage()
+                  : HomePage(widget.store));
         }));
-    ;
   }
 }

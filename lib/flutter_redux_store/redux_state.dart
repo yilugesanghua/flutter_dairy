@@ -1,7 +1,7 @@
 import 'package:flutter_dairy/flutter_redux_store/redux_middle_ware.dart';
-import 'package:flutter_dairy/ui/create/dairy.dart';
+import 'package:flutter_dairy/model/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
-import 'package:flutter_dairy/ui/user/user.dart';
+import 'package:flutter_dairy/model/user.dart';
 import 'package:flutter_dairy/ui/user/user_reducer.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';

@@ -1,7 +1,7 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dairy/ui/create/dairy.dart';
+import 'package:flutter_dairy/model/dairy.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_dairy/widget/input_note.dart';
 

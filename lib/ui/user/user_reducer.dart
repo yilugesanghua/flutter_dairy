@@ -6,7 +6,7 @@ import 'package:flutter_dairy/biz/dairy_biz.dart';
 import 'package:flutter_dairy/const/shareprefer_const.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/home/home_page.dart';
-import 'package:flutter_dairy/ui/user/user.dart';
+import 'package:flutter_dairy/model/user.dart';
 import 'package:flutter_dairy/util/sharepreference_util.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
 import 'package:fluttertoast/fluttertoast.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/create_dairy_page.dart';
-import 'package:flutter_dairy/ui/create/dairy.dart';
+import 'package:flutter_dairy/model/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
 import 'package:flutter_dairy/ui/home/diary_detail.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
@@ -66,7 +66,12 @@ class HomePageState extends State<HomePage> {
         converter: (store) => store.state.dairyList,
         builder: (BuildContext context, List<Dairy> dairy) {
           return EasyRefresh(
-            emptyWidget: dairy==null||dairy.isEmpty?Icon(Icons.sort,color: Colors.red,):null,
+            emptyWidget: dairy == null || dairy.isEmpty
+                ? Icon(
+                    Icons.sort,
+                    color: Colors.red,
+                  )
+                : null,
             firstRefresh: true,
             enableControlFinishLoad: true,
             enableControlFinishRefresh: true,
@@ -129,15 +134,18 @@ class HomePageState extends State<HomePage> {
                               padding: EdgeInsets.only(top: 6),
                             ),
                             Hero(
-                                transitionOnUserGestures: true,
-                                tag: "detail${item.id}",
-                                child: Text(
-                                  "${dairy[index].content}",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black54,
-                                  ),
-                                )),
+                              transitionOnUserGestures: true,
+                              tag: "detail${item.id}",
+                              child: Text(
+                                "${dairy[index].content}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                ),
+                                maxLines: 3,
+                                overflow:TextOverflow.ellipsis ,
+                              ),
+                            ),
                             Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.end,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dairy/biz/dairy_biz.dart';
 import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
-import 'package:flutter_dairy/ui/create/dairy.dart';
+import 'package:flutter_dairy/model/dairy.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:fluttertoast/fluttertoast.dart';
