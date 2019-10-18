@@ -59,3 +59,21 @@ getDairyList(
     onStart: onStart,
   );
 }
+
+///获取配置信息
+getConfig(
+  Function callBack, {
+  CancelToken cancelToken,
+  Map<String, String> queryParameters,
+  Map headers,
+  failCallBack(int code, String msg),
+  onStart(),
+}) async {
+  APiService.instance.get(configUrl, callBack,
+      cancelToken: cancelToken,
+      failCallBack: failCallBack,
+      queryParameters: queryParameters,
+      headers: headers,
+      onStart: onStart,
+      maxAge: Duration(days: 7));
+}

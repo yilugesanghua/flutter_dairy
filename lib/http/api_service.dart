@@ -34,7 +34,7 @@ class APiService {
         queryParameters: queryParameters,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
-        failCallBack: failCallBack,
+        failCallBack: failCallBack ?? (int code, String msg) {},
         headers: headers,
         onStart: onStart,
         maxAge: maxAge);
@@ -57,7 +57,7 @@ class APiService {
         headers: headers,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
-        failCallBack: failCallBack,
+        failCallBack: failCallBack ?? (int code, String msg) {},
         onStart: onStart);
   }
 
@@ -77,7 +77,7 @@ class APiService {
         queryParameters: queryParameters,
         cancelToken: cancelToken,
         onSendProgress: onReceiveProgress,
-        failCallBack: failCallBack,
+        failCallBack: failCallBack??(int code,String msg){},
         onStart: onStart);
   }
 }

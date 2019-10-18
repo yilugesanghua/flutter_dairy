@@ -198,9 +198,15 @@ class DioApiStrategy {
       await failCallBack(-995, "cancel");
       print("请求取消");
     } else {
-      await failCallBack(-994, "error");
+      if (await isConnected()) {
+        await failCallBack(-994, "error request ");
+        print("未知错误");
+      } else {
+        await failCallBack(-992, "no net work");
+        print("没有网络");
+      }
       //DEFAULT Default error type, Some other Error. In this case, you can read the DioError.error if it is not null.
-      print("未知错误");
+
     }
   }
 }

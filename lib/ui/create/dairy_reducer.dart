@@ -128,12 +128,13 @@ Future<ThunkAction<ReduceState>> dairyList(EasyRefreshController _controller,
 
 ///创建日记
 ThunkAction<ReduceState> toCreateDairy(BuildContext context,
-    {String weather, String content, String mood}) {
+    {String weather, String content, String moodId,String weatherId}) {
   return (Store<ReduceState> store) async {
     Map<String, String> params = Map();
     params["weather"] = weather;
     params["content"] = content;
-    params["mood"] = mood;
+    params["moodId"] = moodId;
+    params["weatherId"] = weatherId;
     createDairy(
         (result) {
           print("创建成功 result : $result");

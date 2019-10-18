@@ -44,7 +44,10 @@ class CreateDairyState extends State<CreateDairyPage> {
                     print("************************");
                     if (_sendOpacity == 1) {
                       store.dispatch(toCreateDairy(context,
-                          weather: _title, content: _content, mood: "开心"));
+                          weather: _title,
+                          content: _content,
+                          moodId: "1",
+                          weatherId: "2"));
                     }
                   };
                 },
@@ -146,7 +149,7 @@ class CreateDairyState extends State<CreateDairyPage> {
                     maxLines: 4,
                   ),
                 ),
-                DairyText(  ),
+                DairyText(),
               ],
             ),
           ),

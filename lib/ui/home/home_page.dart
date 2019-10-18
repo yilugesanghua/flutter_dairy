@@ -8,9 +8,11 @@ import 'package:flutter_dairy/model/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
 import 'package:flutter_dairy/ui/home/diary_detail.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
+import 'package:flutter_dairy/util/toast_util.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:redux/redux.dart';
 
 class HomePage extends StatefulWidget {
@@ -124,7 +126,7 @@ class HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "${dairy[index].weather} ${dairy[index].mood}",
+                              "${dairy[index].weather?.weather} ${dairy[index].mood?.mood}",
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.black87,
@@ -143,7 +145,7 @@ class HomePageState extends State<HomePage> {
                                   color: Colors.black54,
                                 ),
                                 maxLines: 3,
-                                overflow:TextOverflow.ellipsis ,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Row(
@@ -180,16 +182,30 @@ class HomePageState extends State<HomePage> {
             ),
             onRefresh: () async {
               page = 1;
-              widget.store.dispatch(await dairyList(_controller, page: page,
-                  success: (List<Dairy> result, int pageSize) {
-                page++;
-              }));
+              widget.store.dispatch(await dairyList(
+                _controller,
+                page: page,
+                success: (List<Dairy> result, int pageSize) {
+                  page++;
+                },
+                failCallback: (code, msg) {
+                  KingToast.show(msg, gravity: ToastGravity.CENTER);
+                  _controller.finishRefresh(success: false);
+                },
+              ));
             },
             onLoad: () async {
-              widget.store.dispatch(await dairyList(_controller, page: page,
-                  success: (List<Dairy> result, int pageSize) {
-                page++;
-              }));
+              widget.store.dispatch(await dairyList(
+                _controller,
+                page: page,
+                success: (List<Dairy> result, int pageSize) {
+                  page++;
+                },
+                failCallback: (code, msg) {
+                  KingToast.show(msg, gravity: ToastGravity.CENTER);
+                  _controller.finishLoad(success: false);
+                },
+              ));
             },
           );
         },
