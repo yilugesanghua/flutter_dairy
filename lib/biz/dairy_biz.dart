@@ -60,6 +60,27 @@ getDairyList(
   );
 }
 
+///获取详情
+getDiaryDetail(
+  Function callBack, {
+  CancelToken cancelToken,
+  Map<String, String> queryParameters,
+  Map headers,
+  failCallBack(int code, String msg),
+  onStart(),
+}) {
+  APiService.instance.get(
+    diaryDetailUrl,
+    callBack,
+    cancelToken: cancelToken,
+    failCallBack: failCallBack,
+    queryParameters: queryParameters,
+    headers: headers,
+    onStart: onStart,
+    maxAge: Duration(days: 365),
+  );
+}
+
 ///获取配置信息
 getConfig(
   Function callBack, {

@@ -53,61 +53,55 @@ class WelComePageState extends State<WelComePage> {
               ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
                 ..init(context);
 
-          return MaterialApp(
-              title: 'Dairy',
-              theme: new ThemeData(
-                primarySwatch: Colors.blue,
-              ),
-              home: Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.pink,
-                    ),
-                    Opacity(
-                      opacity: _opacity,
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: InkWidget(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                left: px36,
-                                right: px36,
-                                top: px12,
-                                bottom: px12),
-                            child: Text(
-                              "立即体验",
-                              style: TextStyle(
-                                  fontSize: px36, color: Colors.white),
-                            ),
+          return Scaffold(
+            body: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.pink,
+                  ),
+                  Opacity(
+                    opacity: _opacity,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: InkWidget(
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: px36, right: px36, top: px12, bottom: px12),
+                          child: Text(
+                            "立即体验",
+                            style:
+                                TextStyle(fontSize: px36, color: Colors.white),
                           ),
-                          highlightColor: Colors.blue,
-                          borderRadius:
-                              BorderRadius.all(const Radius.circular(60)),
-                          splashColor: Colors.pink,
-                          normalColor: Colors.black,
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil(context,
-                                MaterialPageRoute(
-                              builder: (context) {
-                                if (store.state.user.token == null ||
-                                    store.state.user.token.isEmpty) {
-                                  return LoginInPage();
-                                } else {
-                                  return HomePage(widget.store);
-                                }
-                              },
-                            ), (route) => route == null);
-                          },
                         ),
+                        highlightColor: Colors.blue,
+                        borderRadius:
+                            BorderRadius.all(const Radius.circular(60)),
+                        splashColor: Colors.pink,
+                        normalColor: Colors.black,
+                        onTap: () {
+                          Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(
+                            builder: (context) {
+                              if (store.state.user.token == null ||
+                                  store.state.user.token.isEmpty) {
+                                return LoginInPage();
+                              } else {
+                                return HomePage(widget.store);
+                              }
+                            },
+                          ), (route) => route == null);
+                        },
                       ),
-                    )
-                  ],
-                ),
-              ));
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
         }));
   }
 }

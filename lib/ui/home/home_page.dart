@@ -6,7 +6,7 @@ import 'package:flutter_dairy/flutter_redux_store/redux_state.dart';
 import 'package:flutter_dairy/ui/create/create_dairy_page.dart';
 import 'package:flutter_dairy/model/dairy.dart';
 import 'package:flutter_dairy/ui/create/dairy_reducer.dart';
-import 'package:flutter_dairy/ui/home/diary_detail.dart';
+import 'package:flutter_dairy/ui/detail/diary_detail.dart';
 import 'package:flutter_dairy/util/screen_size.dart';
 import 'package:flutter_dairy/util/toast_util.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -85,7 +85,7 @@ class HomePageState extends State<HomePage> {
                 return GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                      return DiaryDetailPage(item);
+                      return DiaryDetailPage(item?.id);
                     }));
                   },
                   child: Slidable(

@@ -191,7 +191,7 @@ class DioApiStrategy {
       await failCallBack(e?.response?.statusCode ?? -996, "server error");
       print("出现异常");
       if (e?.response?.statusCode == 401) {
-        //TODO 退出登录
+        //TODO 退出登录 (授权失败 登录过期等处理)
       }
     } else if (e.type == DioErrorType.CANCEL) {
       // When the request is cancelled, dio will throw a error with this type.

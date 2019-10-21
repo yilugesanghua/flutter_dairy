@@ -91,6 +91,8 @@ List<Dairy> _loadList(List<Dairy> dairy, LoadListAction action) {
   return dairy;
 }
 
+//class
+
 ///获取日记列表数据
 Future<ThunkAction<ReduceState>> dairyList(EasyRefreshController _controller,
     {int page = 1, int pageCount = 20, success, failCallback}) async {
@@ -128,7 +130,7 @@ Future<ThunkAction<ReduceState>> dairyList(EasyRefreshController _controller,
 
 ///创建日记
 ThunkAction<ReduceState> toCreateDairy(BuildContext context,
-    {String weather, String content, String moodId,String weatherId}) {
+    {String weather, String content, String moodId, String weatherId}) {
   return (Store<ReduceState> store) async {
     Map<String, String> params = Map();
     params["weather"] = weather;

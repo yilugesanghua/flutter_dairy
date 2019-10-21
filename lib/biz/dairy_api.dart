@@ -10,5 +10,8 @@ const String createDairyUrl = '$baseUrl/note/publish/';
 ///列表
 const String dairyListUrl = '$baseUrl/note/publishList/';
 
+///详情
+const String diaryDetailUrl = '$baseUrl/note/noteDetail/';
+
 ///配置
 const String configUrl = '$baseUrl/note/noteParams/';

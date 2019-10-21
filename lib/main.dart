@@ -7,7 +7,7 @@ import 'flutter_redux_store/redux_state.dart';
 
 String token;
 
-main() async {
+main() {
   /// 创建全局Store
   final store = Store<ReduceState>(
     getReduce,
